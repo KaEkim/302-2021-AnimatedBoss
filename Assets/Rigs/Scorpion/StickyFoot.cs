@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class StickyFoot : MonoBehaviour
 {
+
+    public static float moveThreshold = 2;
 
     public Transform stepPosition;
 
@@ -18,10 +21,12 @@ public class StickyFoot : MonoBehaviour
     private float timeLength = .15f;
     private float timeCurrent = 0;
 
+    Transform kneePole;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        kneePole = transform.GetChild(0);
     }
 
     // Update is called once per frame
@@ -29,6 +34,7 @@ public class StickyFoot : MonoBehaviour
     {   
         if (CheckIfCanStep())
         {
+
             DoRaycast();
 
         }
@@ -46,7 +52,15 @@ public class StickyFoot : MonoBehaviour
             transform.position = finalPosition;
 
             transform.rotation = AnimMath.Lerp(prevPlantedRotation, plantedRotation, p);
-            
+
+            Vector3 vFromCenter = transform.position - transform.parent.position;
+
+            vFromCenter.y = 0;
+
+            vFromCenter.Normalize();
+            vFromCenter.y += 2.5f;
+
+            //kneePole.position = vFromCenter + transform.position;
 
         }
         else
@@ -55,16 +69,15 @@ public class StickyFoot : MonoBehaviour
             transform.rotation = plantedRotation;
         }
 
-
-
-
     }
 
     bool CheckIfCanStep()
     {
+
+        if (timeCurrent < timeLength) return false;
         Vector3 vBetween = transform.position - stepPosition.position;
-        float threshold = 1.5f;
-        return (vBetween.sqrMagnitude > threshold * threshold);
+        
+        return (vBetween.sqrMagnitude > moveThreshold * moveThreshold);
 
     }
 
@@ -84,7 +97,7 @@ public class StickyFoot : MonoBehaviour
             timeCurrent = 0;
 
             plantedPosition = hit.point;
-            plantedRotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            plantedRotation = Quaternion.FromToRotation(transform.up, hit.normal);// transform.rotation;
       
         }
     }
