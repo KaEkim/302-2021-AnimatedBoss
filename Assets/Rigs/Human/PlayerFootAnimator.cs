@@ -14,16 +14,19 @@ public class PlayerFootAnimator : MonoBehaviour
         startingPos = transform.localPosition;
     }
 
-    
+
     void Update()
     {
-        if (PlayerController.moving)
+        if (!PlayerHandAnimator.attacking)
         {
-            AnimateWalk();
-        }
-        else
-        {
-            AnimateIdle();
+            if (PlayerController.moving)
+            {
+                AnimateWalk();
+            }
+            else
+            {
+                AnimateIdle();
+            }
         }
     }
 
@@ -36,7 +39,7 @@ public class PlayerFootAnimator : MonoBehaviour
         transform.localPosition = finalPos;
 
     }
-    
+
     void AnimateIdle()
     {
 

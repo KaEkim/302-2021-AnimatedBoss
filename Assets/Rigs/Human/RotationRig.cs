@@ -22,8 +22,5 @@ public class RotationRig : MonoBehaviour
         targetRot.z = 0;
 
         transform.rotation = targetRot;
-
-
-
     }
 }

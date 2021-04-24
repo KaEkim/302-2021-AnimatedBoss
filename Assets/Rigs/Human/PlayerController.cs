@@ -48,92 +48,71 @@ public class PlayerController : MonoBehaviour
             isRun = 1f;
         }
 
-        float v = Input.GetAxis("Vertical");
-        //float h = Input.GetAxis("Horizontal");
+        //float v = Input.GetAxis("Vertical");
 
-        //if (v > 0)// || h != 0)
-        //{
-         //   Quaternion newRot = Quaternion.Lerp(transform.rotation, cameraRig.transform.rotation, .02f * isRun);
-          //  newRot.x = 0;
-           // newRot.z = 0;
-           // transform.rotation = newRot;
 
-        //}
-
-        if (Input.GetKey(KeyCode.W))
+        if (!PlayerHandAnimator.attacking)
         {
             float singleStep = 20 * Time.deltaTime;
-            Vector3 targetDir = forwardPoint.position - transform.position;
-            Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, singleStep, .0f);
-
-            Quaternion newestDir = Quaternion.LookRotation(newDir);
-
-            newestDir.x = 0;
-            newestDir.z = 0;
-
-            transform.rotation = newestDir;
+            if (Input.GetKey(KeyCode.W))
+            {
+                rotatePlayer(1);
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                rotatePlayer(2);
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                rotatePlayer(3);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                rotatePlayer(4);
+            }
         }
-
-        if (Input.GetKey(KeyCode.S))
+        else
         {
-            float singleStep = 20 * Time.deltaTime;
-            Vector3 targetDir = backwardPoint.position - transform.position;
-            Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, singleStep, .0f);
-
-            Quaternion newestDir = Quaternion.LookRotation(newDir);
-
-            newestDir.x = 0;
-            newestDir.z = 0;
-
-            transform.rotation = newestDir;
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            float singleStep = 20 * Time.deltaTime;
-            Vector3 targetDir = leftPoint.position - transform.position;
-            Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, singleStep, .0f);
-
-            Quaternion newestDir = Quaternion.LookRotation(newDir);
-
-            newestDir.x = 0;
-            newestDir.z = 0;
-
-            transform.rotation = newestDir;
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            float singleStep = 20 * Time.deltaTime;
-            Vector3 targetDir = rightPoint.position - transform.position;
-            Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, singleStep, .0f);
-
-            Quaternion newestDir = Quaternion.LookRotation(newDir);
-
-            newestDir.x = 0;
-            newestDir.z = 0;
-
-            transform.rotation = newestDir;
+            rotatePlayer(1);
         }
 
 
-
-        //if (Input.GetKey(KeyCode.D))
-        //{
-         //   transform.Rotate(0, 2, 0);
-        //}
-        //if (Input.GetKey(KeyCode.A))
-        //{
-         //   transform.Rotate(0, -2, 0);
-        //}
-
-        
-
-        if (moving)
+        if (moving && !PlayerHandAnimator.attacking)
         {
             pawn.SimpleMove(transform.forward * walkSpeed * isRun);
         }
-
-
     }
+
+
+    void rotatePlayer(int input)
+    {
+        Transform direction = this.transform;
+        switch (input)
+        {
+            case 1:
+                direction  = forwardPoint;
+                break;
+            case 2:
+                direction = backwardPoint;
+                break;
+            case 3:
+                direction = leftPoint;
+                break;
+            case 4:
+                direction = rightPoint;
+                break;
+        }
+        
+        Vector3 targetDir = direction.position - transform.position;
+        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 20 * Time.deltaTime, 0f);
+
+        Quaternion newestDir = Quaternion.LookRotation(newDir);
+
+        newestDir.x = 0;
+        newestDir.z = 0;
+
+        transform.rotation = newestDir;
+    }
+
+
 }

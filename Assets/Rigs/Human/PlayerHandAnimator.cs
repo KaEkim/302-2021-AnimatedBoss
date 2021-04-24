@@ -11,7 +11,7 @@ public class PlayerHandAnimator : MonoBehaviour
 
     public Transform attackLoc;
 
-    private bool attacking;
+    public static bool attacking;
 
 
     // Start is called before the first frame update

@@ -5,6 +5,7 @@ using UnityEngine;
 public class HeadController : MonoBehaviour
 {
 
+
     Quaternion startingPos;
     // Start is called before the first frame update
     void Start()
@@ -15,13 +16,16 @@ public class HeadController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayerController.moving)
+        if (!PlayerHandAnimator.attacking)
         {
-            AnimateWalk();
-        }
-        else
-        {
-            AnimateIdle();
+            if (PlayerController.moving)
+            {
+                AnimateWalk();
+            }
+            else
+            {
+                AnimateIdle();
+            }
         }
     }
 
