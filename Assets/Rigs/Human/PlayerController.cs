@@ -5,12 +5,16 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
+    public static bool isDed = false;
+
     public Transform forwardPoint;
     public Transform backwardPoint;
     public Transform rightPoint;
     public Transform leftPoint;
 
     private CharacterController pawn;
+
+    Quaternion startingRotation;
 
     public float walkSpeed = 1.8f;
 
@@ -25,62 +29,73 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         pawn = GetComponent<CharacterController>();
+        startingRotation = transform.localRotation;
     }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        if (!isDed)
         {
-            moving = true;
-        }
-        else
-        {
-            moving = false;
-        }
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+            {
+                moving = true;
+            }
+            else
+            {
+                moving = false;
+            }
 
 
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
-        {
-            isRun = 2.5f;
-        }
-        else
-        {
-            isRun = 1f;
-        }
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            {
+                isRun = 2.5f;
+            }
+            else
+            {
+                isRun = 1f;
+            }
 
-        //float v = Input.GetAxis("Vertical");
+            //float v = Input.GetAxis("Vertical");
 
 
-        if (!PlayerHandAnimator.attacking)
-        {
-            float singleStep = 20 * Time.deltaTime;
-            if (Input.GetKey(KeyCode.W))
+            if (!PlayerHandAnimator.attacking)
+            {
+                float singleStep = 20 * Time.deltaTime;
+                if (Input.GetKey(KeyCode.W))
+                {
+                    rotatePlayer(1);
+                }
+                if (Input.GetKey(KeyCode.S))
+                {
+                    rotatePlayer(2);
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    rotatePlayer(3);
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    rotatePlayer(4);
+                }
+            }
+            else
             {
                 rotatePlayer(1);
             }
-            if (Input.GetKey(KeyCode.S))
+
+
+            if (moving && !PlayerHandAnimator.attacking)
             {
-                rotatePlayer(2);
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                rotatePlayer(3);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                rotatePlayer(4);
+                pawn.SimpleMove(transform.forward * walkSpeed * isRun);
             }
         }
         else
         {
-            rotatePlayer(1);
+            Quaternion targetRot = startingRotation;
+            targetRot.x += .8f;
+            transform.localRotation = AnimMath.Lerp(transform.localRotation, targetRot, .08f);
         }
-
-
-        if (moving && !PlayerHandAnimator.attacking)
-        {
-            pawn.SimpleMove(transform.forward * walkSpeed * isRun);
-        }
+               
     }
 
 
@@ -102,7 +117,7 @@ public class PlayerController : MonoBehaviour
                 direction = rightPoint;
                 break;
         }
-        
+
         Vector3 targetDir = direction.position - transform.position;
         Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 20 * Time.deltaTime, 0f);
 
@@ -113,6 +128,5 @@ public class PlayerController : MonoBehaviour
 
         transform.rotation = newestDir;
     }
-
 
 }

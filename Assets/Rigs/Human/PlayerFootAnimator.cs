@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerFootAnimator : MonoBehaviour
 {
-
     private Vector3 startingPos;
 
     public float stepOffset = 0;
@@ -17,15 +16,22 @@ public class PlayerFootAnimator : MonoBehaviour
 
     void Update()
     {
-        if (!PlayerHandAnimator.attacking)
+        if (PlayerController.isDed)
         {
-            if (PlayerController.moving)
+            transform.localPosition = AnimMath.Slide(transform.localPosition, startingPos, .01f);
+        }
+        else
+        {
+            if (!PlayerHandAnimator.attacking)
             {
-                AnimateWalk();
-            }
-            else
-            {
-                AnimateIdle();
+                if (PlayerController.moving)
+                {
+                    AnimateWalk();
+                }
+                else
+                {
+                    AnimateIdle();
+                }
             }
         }
     }
@@ -36,15 +42,20 @@ public class PlayerFootAnimator : MonoBehaviour
 
         finalPos.z += (Mathf.Sin(Time.time * 4 * PlayerController.isRun + stepOffset)) / 2.5f * PlayerController.isRun;
 
+        //Stops the rig from just jumping strait to where it wants
+        finalPos = AnimMath.Slide(transform.localPosition, finalPos, .01f);
+
         transform.localPosition = finalPos;
 
     }
 
     void AnimateIdle()
     {
-
-
-        transform.localPosition = startingPos;
+        
+        //Stops the rig from just jumping strait to where it wants
+        Vector3 newLoc = AnimMath.Slide(transform.localPosition, startingPos, .01f);
+        
+        transform.localPosition = newLoc;
 
     }
 
